@@ -102,36 +102,58 @@ function drawDateVolume(){
  $('dateVolumeChart').innerHTML=svg;
  updateVolumeToggles();
 }
-function selectHour(hour){selectedHour=hour;drawHistoricalOdds();drawSexVolume()}
-function hourlyBounds(){const values=sexHourlyVolume.map(v=>Date.parse(v.hour)).filter(Number.isFinite);const history=(historicalOdds?.points||[]).map(p=>p.at).filter(Number.isFinite);return [Math.min(...values,...history,Date.now()),Math.max(...values,...history,Date.now())]}
-function selectedHourSummary(){const out=$('sexHourSummary');if(!out)return;const now=selectedHour===null?Date.now():Date.parse(selectedHour);const start=Math.floor(now/3600000)*3600000;const hour=sexHourlyVolume.find(v=>Date.parse(v.hour)===start);const points=(historicalOdds?.points||[]).filter(p=>Number.isFinite(p.at)&&p.at<=Math.min(Date.now(),start+3600000-1));const p=points.length?points[points.length-1].boy:softmax(state.sexQ)[0];out.textContent=historicalTime(start)+' · Boy '+priceTag(p)+' / Girl '+priceTag(1-p)+' · Volume '+formatSP((hour?.sp?.[0]||0)+(hour?.sp?.[1]||0))+' ('+asShares((hour?.shares?.[0]||0)+(hour?.shares?.[1]||0))+' shares)'}
+function hourStart(ms){return Math.floor(ms/3600000)*3600000}
+function selectHour(hour){const ms=typeof hour==='number'?hour:Date.parse(hour);if(!Number.isFinite(ms))return;const [start,end]=hourlyBounds();selectedHour=Math.min(end,Math.max(start,hourStart(ms)));drawHistoricalOdds();drawSexVolume()}
+function hourlyBounds(){
+ const times=sexHourlyVolume.map(v=>Date.parse(v.hour)).filter(Number.isFinite);
+ const historical=(historicalOdds?.points||[]).map(p=>Number(p.at)).filter(Number.isFinite);
+ const first=Math.min(...times,...historical,Date.now());
+ const last=Date.now();
+ return [hourStart(first),hourStart(last)];
+}
+function chartHourAtEvent(event,svg){
+ const bounds=svg.getBoundingClientRect();
+ if(!bounds.width)return;
+ const fraction=Math.max(0,Math.min(1,(event.clientX-bounds.left)/bounds.width));
+ const [start,end]=hourlyBounds();
+ selectHour(hourStart(start+fraction*(end-start)));
+}
+function selectedHourSummary(){
+ const out=$('sexHourSummary');if(!out)return;
+ const [startBound,endBound]=hourlyBounds();
+ const start=selectedHour===null?endBound:selectedHour;
+ const hour=sexHourlyVolume.find(v=>Date.parse(v.hour)===start);
+ const cutoff=Math.min(Date.now(),start+3600000-1);
+ const points=(historicalOdds?.points||[]).filter(p=>Number.isFinite(p.at)&&p.at<=cutoff);
+ const boy=points.length?Number(points[points.length-1].boy):historicalOdds?.points?.[0]?.boy??softmax(state.sexQ)[0];
+ out.textContent=historicalTime(start)+' · Boy '+priceTag(boy)+' / Girl '+priceTag(1-boy)+' · Boy volume '+formatSP(hour?.sp?.[0])+' ('+asShares(hour?.shares?.[0])+' shares) · Girl volume '+formatSP(hour?.sp?.[1])+' ('+asShares(hour?.shares?.[1])+' shares)';
+}
 function drawSexVolume(){
  if(!state.current)return;
- const metric=volumeMetric.sex,vals=Array.isArray(sexHourlyVolume)?sexHourlyVolume:[];
+ const metric=volumeMetric.sex,raw=Array.isArray(sexHourlyVolume)?sexHourlyVolume:[];
  const svgEl=$('sexVolumeChart');
- if(!vals.length){
-  svgEl.innerHTML='<text x="250" y="57" font-size="12" fill="#8da5c6" text-anchor="middle">No trading volume yet</text>';
-  selectedHourSummary();updateVolumeToggles();return;
- }
- const val=(v,i)=>Math.max(0,Number(metric==='sp'?v.sp?.[i]:v.shares?.[i])||0);
- const max=Math.max(1,...vals.map(v=>val(v,0)+val(v,1)));
- const [first,last]=hourlyBounds();
- const x=hour=>first===last?250:10+480*(Date.parse(hour)-first)/(last-first);
- const w=Math.max(4,Math.min(26,400/Math.max(vals.length,1))),baseline=100,scale=88/max;
+ const [start,end]=hourlyBounds(),totalHours=Math.floor((end-start)/3600000)+1;
+ const byHour=new Map(raw.map(v=>[Date.parse(v.hour),v]));
+ const value=(v,i)=>Math.max(0,Number(metric==='sp'?v?.sp?.[i]:v?.shares?.[i])||0);
+ const max=Math.max(1,...raw.map(v=>value(v,0)+value(v,1)));
+ const slotWidth=480/Math.max(1,totalHours),w=Math.max(.5,Math.min(22,slotWidth*.85));
+ const x=ms=>10+480*(ms-start+1800000)/(totalHours*3600000);
+ const baseline=100,scale=88/max;
  let svg='<path d="M0 100H500 M0 56H500 M0 12H500" stroke="#293b57" stroke-dasharray="4 6" fill="none"/>';
  svg+='<text x="492" y="10" font-size="10" text-anchor="end" fill="#8da5c6">'+(metric==='sp'?formatSP(max):asShares(max)+' shares')+' max</text>';
- for(const v of vals){
-  const cx=x(v.hour),boy=val(v,0),girl=val(v,1),boyH=boy*scale,girlH=girl*scale;
-  if(boyH>0)svg+='<rect x="'+(cx-w/2).toFixed(2)+'" y="'+(baseline-boyH).toFixed(2)+'" width="'+w+'" height="'+Math.max(0.75,boyH).toFixed(2)+'" rx="1.5" fill="#64a1ff"/>';
-  if(girlH>0)svg+='<rect x="'+(cx-w/2).toFixed(2)+'" y="'+(baseline-boyH-girlH).toFixed(2)+'" width="'+w+'" height="'+Math.max(.75,girlH).toFixed(2)+'" rx="1.5" fill="#e58ac4"/>';
-  const title=historicalTime(Date.parse(v.hour))+' · Boy '+formatSP(v.sp?.[0])+' / '+asShares(v.shares?.[0])+' shares · Girl '+formatSP(v.sp?.[1])+' / '+asShares(v.shares?.[1])+' shares';
-  svg+='<rect x="'+(cx-Math.max(w,16)/2).toFixed(2)+'" y="12" width="'+Math.max(w,16)+'" height="90" fill="transparent" role="button" tabindex="0" onclick="selectHour(\''+v.hour+'\')" onkeydown="if(event.key===&#39;Enter&#39;||event.key===&#39; &#39;){event.preventDefault();selectHour(\''+v.hour+'\')}" aria-label="'+safe(title)+'"><title>'+safe(title)+'</title></rect>';
+ // One slot per elapsed hour, including hours with zero volume.
+ for(let i=0;i<totalHours;i++){
+  const ms=start+i*3600000,v=byHour.get(ms),cx=x(ms),boy=value(v,0),girl=value(v,1);
+  const boyH=boy*scale,girlH=girl*scale;
+  if(boyH>0)svg+='<rect x="'+(cx-w/2).toFixed(2)+'" y="'+(baseline-boyH).toFixed(2)+'" width="'+w.toFixed(2)+'" height="'+Math.max(.75,boyH).toFixed(2)+'" rx=".5" fill="#64a1ff"/>';
+  if(girlH>0)svg+='<rect x="'+(cx-w/2).toFixed(2)+'" y="'+(baseline-boyH-girlH).toFixed(2)+'" width="'+w.toFixed(2)+'" height="'+Math.max(.75,girlH).toFixed(2)+'" rx=".5" fill="#e58ac4"/>';
  }
- if(selectedHour!==null){const xSelected=x(selectedHour);svg+='<path d="M'+xSelected.toFixed(2)+' 10V102" stroke="#f5f8ff" stroke-width="2" stroke-dasharray="3 3"/>'}
+ if(selectedHour!==null)svg+='<path d="M'+x(selectedHour).toFixed(2)+' 12V102" stroke="#f5f8ff" stroke-width="2" stroke-dasharray="3 3" pointer-events="none"/>';
  svgEl.innerHTML=svg;
+ svgEl.onclick=event=>chartHourAtEvent(event,svgEl);
  selectedHourSummary();
- $('sexVolumeFirst').textContent=historicalTime(Date.parse(vals[0].hour));
- $('sexVolumeLast').textContent=historicalTime(Date.parse(vals[vals.length-1].hour));
+ $('sexVolumeFirst').textContent=historicalTime(start);
+ $('sexVolumeLast').textContent=historicalTime(end);
  updateVolumeToggles();
 }
 async function loadSexVolumeHistory(){
