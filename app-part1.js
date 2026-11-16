@@ -7,8 +7,29 @@ function dateTypeLabel(type){return type==='after'?'On or after':type==='exact'?
 function extraSharesHeld(type,k){return Object.values(state.users||{}).reduce((sum,u)=>sum+Number((type==='after'?u.dateAfter:u.dateExact)?.[k]||0),0)}
 function mergeExtraPositions(){for(const [id,positions] of Object.entries(dateExtraPositions)){if(state.users?.[id])Object.assign(state.users[id],positions)}}
 async function loadDateExtras(){if(!state.current)return;try{const r=await fetch('/api/date-contract',{cache:'no-store'});if(!r.ok)throw Error('Birthday positions unavailable');const data=await r.json();dateExtraPositions=data.positions||{};dateExtraTrades=data.trades||[];mergeExtraPositions();render();renderTrade()}catch(e){console.warn('Could not load new birthday contracts',e)}}
-function rebuildDateOutcomeOptions(previous){if(tradeMarket!=='date')return;const start=tradeContractType==='before'?0:1;const last=tradeContractType==='before'&&tradeMode==='sell'&&Number(user()?.date?.[29]||0)>0?29:28;const html=dates.slice(start,last+1).map((d,i)=>({date:d,index:i+start})).filter(({index})=>tradeMode!=='sell'||Number((tradeContractType==='before'?user()?.date:tradeContractType==='exact'?user()?.dateExact:user()?.dateAfter)?.[index]||0)>1e-7).map(({date,index})=>'<option value="'+index+'">'+label(date)+(tradeMode==='sell'?' · '+asShares(Number((tradeContractType==='before'?user()?.date:tradeContractType==='exact'?user()?.dateExact:user()?.dateAfter)?.[index]||0))+' shares':'')+'</option>').join('');$('tradeOutcome').innerHTML=html;const wanted=Number(previous);const options=Array.from($('tradeOutcome').options).map(o=>o.value);$('tradeOutcome').value=options.includes(String(wanted))?String(wanted):(options.includes(String(cutoff))?String(cutoff):options[0]||'')}
-function chooseTradeDateType(type){if(!['before','after','exact'].includes(type))return;tradeContractType=type;dateContractType=type;if(type!=='before'&&cutoff<1)cutoff=1;rebuildDateOutcomeOptions($('tradeOutcome').value);sellMaxFullShares=null;$('tradeAmount').value='';render();renderTrade()}
+function rebuildDateOutcomeOptions(previous){
+ if(tradeMarket!=='date')return;
+ const start=tradeContractType==='before'?0:1;
+ const last=tradeContractType==='before'&&tradeMode==='sell'&&Number(user()?.date?.[29]||0)>0?29:28;
+ const held=tradeContractType==='before'?user()?.date:tradeContractType==='exact'?user()?.dateExact:user()?.dateAfter;
+ const html=dates.slice(start,last+1).map((d,i)=>{
+  const index=i+start,shares=Number(held?.[index]||0),disabled=tradeMode==='sell'&&shares<=1e-7;
+  return '<option value="'+index+'"'+(disabled?' disabled':'')+'>'+label(d)+(tradeMode==='sell'?' · '+asShares(shares)+' shares':'')+'</option>';
+ }).join('');
+ $('tradeOutcome').innerHTML=html;
+ const wanted=String(previous??'');
+ const available=Array.from($('tradeOutcome').options).filter(o=>!o.disabled).map(o=>o.value);
+ $('tradeOutcome').value=available.includes(wanted)?wanted:(available.includes(String(cutoff))?String(cutoff):available[0]||'');
+}
+function chooseTradeDateType(type){
+ if(!['before','after','exact'].includes(type))return;
+ if(tradeMode==='sell'&&!availableSellTypes().has(type))return;
+ tradeContractType=type;dateContractType=type;
+ if(type!=='before'&&cutoff<1)cutoff=1;
+ rebuildDateOutcomeOptions($('tradeOutcome').value);
+ sellMaxFullShares=null;$('tradeAmount').value='';
+ render();renderTrade();
+}
 function portfolio(u){let sp=softmax(state.sexQ),dp=softmax(state.dateQ);const before=u.date.reduce((a,n,i)=>a+n*dp.slice(0,i+1).reduce((x,y)=>x+y,0),0);const after=(u.dateAfter||[]).reduce((a,n,i)=>a+n*dp.slice(i).reduce((x,y)=>x+y,0),0);const exact=(u.dateExact||[]).reduce((a,n,i)=>a+n*(dp[i]||0),0);return u.cash+u.sex.reduce((a,n,i)=>a+n*sp[i],0)+before+after+exact}
 function holdingsValue(u){return Math.max(0,portfolio(u)-Number(u.cash||0))}
 function spExact(n){return "§"+Number(n||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}
