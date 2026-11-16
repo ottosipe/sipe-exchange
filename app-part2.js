@@ -99,7 +99,7 @@ function openTrade(m,mode){
 }
 
 function selectedPositionShares(p){const u=user();return Number((p.type==='sex'?u.sex:p.type==='before'?u.date:p.type==='exact'?u.dateExact:u.dateAfter)?.[p.index]||0)}
-function selectFirstSellPosition(){if(tradeMode!=='sell')return;const positions=sellPositions().filter(p=>p.market===tradeMarket);if(!positions.length){$('tradeOutcome').value='';return}let chosen=positions.find(p=>p.type===tradeContractType&&String(p.index)===$('tradeOutcome').value)||positions[0];tradeContractType=chosen.type;$('tradeOutcome').value=String(chosen.index);if(tradeMarket==='date')rebuildDateOutcomeOptions(chosen.index)}
+function selectFirstSellPosition(){if(tradeMode!=='sell')return;const positions=sellPositions().filter(p=>p.market===tradeMarket);if(!positions.length){$('tradeOutcome').value='';return}let chosen=positions.find(p=>p.type===tradeContractType&&String(p.index)===$('tradeOutcome').value)||positions[0];tradeContractType=chosen.type;if(tradeMarket==='date')rebuildDateOutcomeOptions(chosen.index);else $('tradeOutcome').value=String(chosen.index)}
 function chooseTradeSex(index){
  if(tradeMarket!=='sex')return;
  sellMaxFullShares=null;
@@ -119,7 +119,7 @@ function switchTradeMode(next){
  const previousOutcome=$('tradeOutcome').value;
  tradeMode=next;
  if(tradeMarket==='date')rebuildDateOutcomeOptions(previousOutcome);
- if(next==='sell')selectFirstSellPosition();else if(tradeMarket==='date')rebuildDateOutcomeOptions(previousOutcome);
+ if(next==='sell')selectFirstSellPosition();
  $('tradeAmount').value=tradeMode==='buy'?'':(selectedTradeHoldings()>0?Math.min(10,selectedTradeHoldings()).toFixed(2):'');
  renderTrade();
 }
@@ -152,9 +152,8 @@ function renderTrade(){
  if(tradeMode==='sell'){
   const positions=sellPositions().filter(p=>p.market===tradeMarket);
   if(tradeMarket==='date'){
-   const types=availableSellTypes();for(const [type,id] of [['before','tradeTypeBefore'],['exact','tradeTypeExact'],['after','tradeTypeAfter']])$(id).classList.toggle('hidden',!types.has(type));
-   const options=positions.filter(p=>p.type===tradeContractType);
-   $('tradeOutcome').innerHTML=options.map(p=>'<option value="'+p.index+'">'+safe(label(dates[p.index]))+' · '+asShares(selectedPositionShares(p))+' shares</option>').join('');
+   const types=availableSellTypes();
+   for(const [type,id] of [['before','tradeTypeBefore'],['exact','tradeTypeExact'],['after','tradeTypeAfter']])$(id).classList.toggle('hidden',!types.has(type));
   }else{
    $('tradeSexBoy').classList.toggle('hidden',!positions.some(p=>p.index===0));$('tradeSexGirl').classList.toggle('hidden',!positions.some(p=>p.index===1));
   }
@@ -177,7 +176,7 @@ function renderTrade(){
  }
  $('tradeAmount').max=tradeMode==='buy'?String(Math.max(0,available)):String(held);
  const raw=$('tradeAmount').value,amount=tradeMode==='sell'&&sellMaxFullShares!==null?sellMaxFullShares:Number(raw),valid=raw.trim()!==''&&Number.isFinite(amount)&&amount>0;
- const err=!selected?'Choose an outcome first.':tradeMode==='sell'&&held<=0?'You have no shares to sell for this outcome.':!valid?'Enter a positive amount.':tradeMode==='buy'&&amount>available+1e-8?'Not enough available balance.':tradeMode==='sell'&&amount>held+1e-7?'You cannot sell more shares than you hold.':'';
+ const err=!selected?(tradeMode==='sell'?'No holdings available to sell.':'Choose an outcome first.'):tradeMode==='sell'&&held<=0?'You have no shares to sell for this outcome.':!valid?'Enter a positive amount.':tradeMode==='buy'&&amount>available+1e-8?'Not enough available balance.':tradeMode==='sell'&&amount>held+1e-7?'You cannot sell more shares than you hold.':'';
  const quote=!err?quoteShares(amount):null;
  $('tradeError').textContent=err;
  const avg=quote&&quote.shares>0?priceTag(Math.abs(quote.value)/quote.shares):'';
