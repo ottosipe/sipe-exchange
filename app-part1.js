@@ -114,7 +114,8 @@ function hourlyBounds(){
 function chartHourAtEvent(event,svg){
  const bounds=svg.getBoundingClientRect();
  if(!bounds.width)return;
- const fraction=Math.max(0,Math.min(1,(event.clientX-bounds.left)/bounds.width));
+ const x=(event.clientX-bounds.left)*500/bounds.width;
+ const fraction=Math.max(0,Math.min(1,(x-10)/480));
  const [start,end]=hourlyBounds();
  selectHour(hourStart(start+fraction*(end-start)));
 }
