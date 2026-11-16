@@ -133,7 +133,7 @@ a:focus-visible{outline:2px solid #87b5ff;outline-offset:4px}
   <div class="math-copy">
    <p>The market tracks a quantity <strong style="color:#eaf1ff">qᵢ</strong> for each possible outcome. A mathematical function called <em>softmax</em> turns those quantities into prices:</p>
    <div class="equation" role="math" aria-label="Price of outcome i equals e to the q i over b, divided by the sum over outcomes j of e to the q j over b">pᵢ = exp(qᵢ / b) / Σⱼ exp(qⱼ / b)</div>
-   <p><strong style="color:#eaf1ff">pᵢ</strong> is the share price and implied probability of outcome <em>i</em>. <strong style="color:#eaf1ff">b</strong> controls how easily trades move prices; it's currently fixed at <strong style="color:#eaf1ff">2,600</strong>. For Boy/Girl, p(Boy) + p(Girl) = 1.</p>
+   <p><strong style="color:#eaf1ff">pᵢ</strong> is the share price and implied probability of outcome <em>i</em>. <strong style="color:#eaf1ff">b</strong> controls how easily trades move prices; it scales with outstanding Sipe Points. For Boy/Girl, p(Boy) + p(Girl) = 1.</p>
   </div>
  </article>
  <article class="math-block">
@@ -156,11 +156,11 @@ a:focus-visible{outline:2px solid #87b5ff;outline-offset:4px}
   </div>
  </article>
  <article class="math-block">
-  <div><div class="math-kicker">04 / LIQUIDITY</div><div class="math-side">Market depth is fixed.</div></div>
+  <div><div class="math-kicker">04 / LIQUIDITY</div><div class="math-side">Market depth grows with SP.</div></div>
   <div class="math-copy">
-   <p>The parameter <strong style="color:#eaf1ff">b = 2,600</strong> controls price sensitivity. A smaller b means a single trade can swing the odds dramatically; a larger b makes the market steadier.</p>
-   <div class="equation" role="math" aria-label="The current LMSR liquidity parameter b equals two thousand six hundred">b = 2,600</div>
-   <p>Liquidity is fixed today. New participants receiving their initial §1,000 do <em>not</em> automatically change existing prices or expand market depth.</p>
+   <p>The parameter <strong style="color:#eaf1ff">b</strong> controls price sensitivity. A smaller b means a single trade can swing the odds dramatically; a larger b makes the market steadier.</p>
+   <div class="equation" role="math" aria-label="Liquidity equals the square root of one thousand times outstanding Sipe Points">b(S) = √(1000 × max(1000, S))</div>
+   <p>Every new player's initial §1,000 and future dividends increase outstanding SP and market depth. Existing prices are preserved when liquidity changes.</p>
   </div>
  </article>
  <article class="math-block">
