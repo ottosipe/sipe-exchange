@@ -4,20 +4,17 @@ function drawHistoricalOdds(){
  if(!historicalOdds?.points?.length){canvas.innerHTML='<path d="M0 70H500" stroke="#2a3c59" stroke-dasharray="4 6"/>';return}
  const pts=historicalOdds.points.filter(p=>Number.isFinite(+p.at)&&Number.isFinite(+p.boy));
  if(pts.length<2)return;
- const [start,end]=hourlyBounds();
- const x=ms=>5+490*(ms-start)/(end-start),y=p=>140-130*Math.min(1,Math.max(0,p));
+ const [start,end]=hourlyBounds(),span=end-start+3600000;
+ const x=ms=>10+480*(ms-start)/span,y=p=>140-130*Math.min(1,Math.max(0,p));
  const line=arr=>arr.map(pt=>x(pt.at).toFixed(2)+','+y(pt.boy).toFixed(2)).join(' ');
  let parts='<path d="M0 70H500 M0 5H500 M0 135H500" stroke="#2a3c59" stroke-dasharray="4 6" fill="none"/>';
- parts+='<polyline points="'+line(pts)+'" fill="none" stroke="#64a1ff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>';
- parts+='<polyline points="'+line(pts.map(pt=>({...pt,boy:1-pt.boy})))+'" fill="none" stroke="#e58ac4" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>';
- for(const pt of pts){
-  if(pt.kind==='opening')continue;
-  const kind=pt.kind==='signup'?'Member joined':pt.kind==='current'?'Current odds':'Trade';
-  const caption=kind+' · '+historicalTime(pt.at)+' · liquidity '+pt.liquidity.toLocaleString('en-US')+' · Boy '+(pt.boy*100).toFixed(2)+'% / Girl '+((1-pt.boy)*100).toFixed(2)+'%';
-  parts+='<circle cx="'+x(pt.at)+'" cy="'+y(pt.boy)+'" r="5" fill="#64a1ff" tabindex="0" role="button" onclick="selectHour(\''+new Date(Math.floor(pt.at/3600000)*3600000).toISOString()+'\')" onkeydown="if(event.key===&#39;Enter&#39;||event.key===&#39; &#39;){event.preventDefault();selectHour(\''+new Date(Math.floor(pt.at/3600000)*3600000).toISOString()+'\')}" aria-label="'+safe(caption)+'"><title>'+safe(caption)+'</title></circle>';
- }
- if(selectedHour!==null){const selected=Date.parse(selectedHour);parts+='<path d="M'+x(selected).toFixed(2)+' 4V140" stroke="#f5f8ff" stroke-dasharray="4 3" stroke-width="2"/>'}
+ parts+='<polyline points="'+line(pts)+'" fill="none" stroke="#64a1ff" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/>';
+ parts+='<polyline points="'+line(pts.map(pt=>({...pt,boy:1-pt.boy})))+'" fill="none" stroke="#e58ac4" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" pointer-events="none"/>';
+ // Transparent interaction layer: inspect any hour without adding price dots.
+ parts+='<rect x="0" y="0" width="500" height="150" fill="transparent" aria-hidden="true"/>';
+ if(selectedHour!==null)parts+='<path d="M'+x(selectedHour+1800000).toFixed(2)+' 4V140" stroke="#f5f8ff" stroke-dasharray="4 3" stroke-width="2" pointer-events="none"/>';
  canvas.innerHTML=parts;
+ canvas.onclick=event=>chartHourAtEvent(event,canvas);
  selectedHourSummary();
  $('historyFirst').textContent=historicalTime(start);
  $('historyLast').textContent='Now · '+historicalTime(end);
