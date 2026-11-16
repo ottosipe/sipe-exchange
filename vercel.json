@@ -1,0 +1,4 @@
+{
+  "buildCommand": "mkdir -p public && cp index.html pricing.js style.css app-part*.js public/ && cp -R how-it-works public/",
+  "outputDirectory": "public"
+}

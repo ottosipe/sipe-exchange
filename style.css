@@ -1,0 +1,196 @@
+
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif;color:#eaf1ff;background:#080f1f}*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.4;cursor:not-allowed}.shell{max-width:1080px;margin:auto;padding:24px 20px 75px}header,.between,.line{display:flex;align-items:center;justify-content:space-between;gap:12px}header{margin-bottom:30px}.brand{font-size:23px;font-weight:850;letter-spacing:-1px}.brand i{font-style:normal;color:#66a3ff}.account{font-size:13px;background:#17243d;padding:11px 14px;border-radius:30px}.eyebrow{color:#7d9aca;font-size:11px;letter-spacing:2px;font-weight:800;text-transform:uppercase}.hero{margin-bottom:25px}.hero h1{font-size:clamp(30px,5vw,45px);letter-spacing:-1.7px;margin:7px 0}.sub{color:#91a3bf;font-size:14px;line-height:1.6}.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(290px,1fr);gap:16px}.stack{display:grid;gap:16px;align-content:start;grid-auto-rows:max-content}.card{border:1px solid #263653;border-radius:18px;background:#111c30;padding:22px;min-width:0}.card h2{font-size:20px;letter-spacing:-.5px;margin:5px 0}.tag{font-size:11px;color:#3bd4a1;font-weight:750}.outcomes{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}.outcome{background:#1b2b47;border:1px solid #314669;border-radius:13px;padding:15px;text-align:left;color:inherit}.outcome span{color:#a6b8d5;font-size:13px}.outcome strong{display:block;font-size:30px;margin-top:5px}.outcome.active{border-color:#5b9aff;background:#20385f}.outcome.girl.active{border-color:#e589c4;background:#492b4e}.chart{width:100%;height:150px;display:block;margin:8px 0}.chart-labels{display:flex;justify-content:space-between;color:#8296b5;font-size:11px}.btn{background:#347af1;color:white;border:0;border-radius:11px;padding:13px 16px;font-weight:750}.btn.secondary{background:#243756}.btn.full{width:100%}.buttonrow{display:flex;gap:8px;margin-top:15px}.buttonrow>*{flex:1}.cutoff{font-size:30px;font-weight:800;letter-spacing:-1px}.prob{font-size:28px;color:#7bb0ff;font-weight:800}.slider{width:100%;accent-color:#4388ff;margin:20px 0 7px}.dateends{display:flex;justify-content:space-between;font-size:11px;color:#8095b6}.leader{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #263650;font-size:13px}.leader:last-child{border:0}.rank{color:#8aa4ca;width:25px}.rel{color:#8397b5;font-size:12px}.value{font-weight:800}.holdings{font-size:12px;color:#9eb0cb}.mini{border-top:1px solid #293952;margin-top:15px;padding-top:15px}.overlay{position:fixed;inset:0;background:#080f1f;display:flex;align-items:center;justify-content:center;padding:18px;z-index:10}.modal{width:100%;max-width:430px;background:#132038;border:1px solid #334766;border-radius:20px;padding:28px}.modal h2{font-size:28px;letter-spacing:-1px;margin:8px 0}.field{margin:17px 0}.field label{display:block;color:#a7b8d3;font-size:13px;margin-bottom:8px}input[type=text],input[type=email],input[type=number],select{background:#0c172a;border:1px solid #354969;border-radius:10px;color:white;padding:12px;width:100%}.tabs{display:flex;background:#0c172a;padding:4px;border-radius:10px;margin:16px 0}.tabs button{flex:1;border:0;background:none;color:#9db0cf;padding:10px;border-radius:8px}.tabs button.active{background:#347af1;color:white}.error{color:#ffaaa9;font-size:12px;min-height:16px;margin:10px 0}.fine{font-size:11px;color:#788eae;line-height:1.5}.hidden{display:none!important}.link{border:0;background:none;color:#83b3ff;font-size:12px}.position{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #253550;font-size:12px}.market-note{color:#8399b8;font-size:12px;line-height:1.5;margin-top:10px}@media(max-width:740px){.layout{grid-template-columns:1fr}.shell{padding:18px 14px 55px}.card{padding:18px}.brand{font-size:20px}.hero{margin-bottom:18px}.hero h1{font-size:32px}}
+
+.trade-feed{margin-top:12px}
+.trade-line{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:11px 0;border-bottom:1px solid #263653}
+.trade-line:last-child{border-bottom:0}
+.trade-left{min-width:0;flex:1}
+.trade-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:4px;font-size:12px}
+.trade-name{color:#ecf3ff;font-weight:750}
+.trade-side{font-size:10px;font-weight:750;letter-spacing:.25px;border-radius:5px;padding:3px 6px}
+.trade-side.buy{background:#183c37;color:#61d2a2}
+.trade-side.sell{background:#403044;color:#f5a2d1}
+.trade-when{color:#91a6c8;font-size:11px}
+.trade-detail{font-size:12px;color:#a1b5d0;line-height:1.45}
+.trade-points{font-size:12px;font-weight:750;color:#e7f0ff;white-space:nowrap}
+.leader-button{color:inherit;background:transparent;border:0;width:100%;text-align:left;cursor:pointer;border-radius:9px}
+.leader-button:hover,.leader-button:focus-visible{background:#1b2d48;outline:none}
+.leader-button:focus-visible{box-shadow:0 0 0 2px #76b5fa}
+.trade-activity .eyebrow{letter-spacing:1px}
+
+.bet-volume{display:block;font-size:12px;color:#b6c7de;margin-top:7px;line-height:1.4;font-weight:600}
+.outcome .bet-volume{color:#a8bdd8}
+.date-bet-volume{font-size:11px;margin-top:5px;color:#a8bdd8}
+.total-sp{color:#97acc9;font-size:12px;margin-top:13px}
+.chart-legend{display:flex;flex-wrap:wrap;align-items:center;gap:13px;font-size:11px;color:#b5c5df;margin-top:8px}
+
+.probability-detail{display:block;font-size:11px;color:#98accd;margin-top:3px}
+.trade-sex-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.trade-sex-choice{min-width:0;text-align:left;padding:14px 12px;border:1px solid #344d77;border-radius:12px;background:#1c2c48;color:#f1f6ff;display:flex;flex-direction:column;gap:5px}
+.trade-sex-choice b{font-size:15px}
+.trade-sex-choice span{font-size:12px;color:#adbfdb;overflow-wrap:anywhere}
+.trade-sex-choice.active{background:#244572;border-color:#72aaff;box-shadow:0 0 0 1px #72aaff inset}
+.trade-sex-choice.girl.active{background:#4a2e4e;border-color:#e89bce;box-shadow:0 0 0 1px #e89bce inset}
+.trade-sex-choice:focus-visible{outline:2px solid #a2c8ff;outline-offset:2px}
+.outcome .bet-volume{margin-top:4px}
+
+.trade-summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.trade-summary{border:1px solid #293b57;background:#15223a;border-radius:11px;padding:11px 12px;min-width:0}
+.summary-heading{display:block;color:#b5c7e1;font-size:11px;letter-spacing:.8px;margin-bottom:6px}
+.trade-summary-detail{font-size:12px;line-height:1.55;color:#c0cee4;overflow-wrap:anywhere}
+.date-trade-summary{grid-template-columns:1fr}
+@media(max-width:450px){.trade-summary{padding:11px 9px}.trade-summary-detail{font-size:11px}}
+
+.volume-panel{margin-top:18px;padding-top:14px;border-top:1px solid #293b57}
+.volume-panel-top{margin-bottom:8px;flex-wrap:wrap}
+.volume-panel-top b{font-size:13px;color:#d4e0f5}
+.volume-chart{width:100%;height:112px;display:block;overflow:visible}
+.volume-caption{font-size:11px;color:#8da5c6;line-height:1.5;margin-top:8px}
+.volume-toggle{display:inline-flex;background:#0d182c;padding:3px;border:1px solid #354867;border-radius:8px;gap:2px}
+.volume-toggle button{border:0;border-radius:5px;background:none;color:#a4b8d4;font-size:11px;font-weight:700;padding:5px 9px}
+.volume-toggle button.active{color:#f3f7ff;background:#2c5b9c}
+.chart-dot-select{cursor:pointer;touch-action:manipulation}
+
+.plain-market-stats{display:grid;gap:5px;margin:10px 0 4px;color:#b8cbe7;font-size:12px;line-height:1.65}
+.plain-market-stats div{min-width:0;overflow-wrap:anywhere}
+.leader-card{width:100%;display:block;padding:13px 9px;border-bottom:1px solid #263650}
+.leader-card:last-child{border-bottom:0}
+.leader-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.leader-name{min-width:0;flex:1}
+.leader-held{padding-left:25px;margin-top:8px;display:grid;gap:8px}
+.leader-held-row{font-size:12px;line-height:1.45;color:#d5e0f2}
+.leader-held-name{font-weight:700;color:#eaf2ff}
+.leader-held-prices{font-size:11px;color:#93acce}
+.leader-held-empty{font-size:12px;color:#879bb9}
+@media(max-width:420px){.leader-held{padding-left:21px}.leader-held-prices{font-size:10px}}
+
+/* Consistent compact rows across leaderboard, account holdings and recent trade feeds */
+.market-entry{padding:12px 4px;border-bottom:1px solid #263650;line-height:1.45;min-width:0}
+.market-entry:last-child{border-bottom:0}
+.market-entry-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;min-width:0}
+.market-entry-name{font-size:13px;font-weight:750;color:#eff5ff;min-width:0;overflow-wrap:anywhere}
+.market-entry-value{font-size:13px;font-weight:800;color:#f5f8ff;text-align:right;white-space:nowrap}
+.market-entry-sub{font-size:11px;line-height:1.55;color:#97aecb;margin-top:4px}
+.portfolio-detail{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:6px 0;color:#a9bdd8;font-size:12px}
+.portfolio-detail strong{font-size:12px;color:#eff5ff;font-weight:750;text-align:right;white-space:nowrap}
+.account-values{border-top:1px solid #263650;padding-top:8px}
+.leader-card.market-entry{display:block;width:100%;padding:13px 4px;cursor:pointer}
+.leader-card .market-entry-sub{margin-top:3px}
+.leader-breakdown{margin:10px 0 3px;padding:8px 10px;background:#101d33;border-radius:8px}
+.leader-breakdown .portfolio-detail{padding:4px 0}
+.position-list{display:grid;gap:0;margin-top:8px}
+.leader-card .position-list{margin-top:10px}
+.position-entry{padding:8px 0 7px;border-top:1px solid #2b3b54}
+.position-entry .market-entry-name{font-size:12px;font-weight:650}
+.position-entry .market-entry-value{font-size:12px}
+.position-entry .market-entry-sub{font-size:11px;margin-top:4px}
+.position-entry .position-shares{color:#a4bad5;font-size:11px;margin-top:2px}
+.position-list-empty{font-size:12px;color:#93a8c5;padding:8px 0}
+.trade-line.market-entry{display:block;padding:12px 3px}
+.trade-line.market-entry .trade-side{margin-right:5px}
+.trade-line .market-entry-sub{overflow-wrap:anywhere}
+.trade-activity{padding-top:12px}
+.recent-dropdown{width:100%}
+.recent-dropdown-trigger{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer;list-style:none;padding:3px 0 7px;color:#eef4ff;appearance:none;border:0;background:transparent;width:100%;text-align:left;font:inherit}
+.recent-dropdown-trigger::-webkit-details-marker{display:none}
+.recent-dropdown-trigger:focus-visible{outline:2px solid #72aaff;outline-offset:4px;border-radius:3px}
+.recent-dropdown-right{display:flex;gap:11px;align-items:center}
+.recent-chevron{display:inline-block;flex:0 0 auto;width:9px;height:9px;border-right:2px solid #a6c2e9;border-bottom:2px solid #a6c2e9;transform:rotate(45deg);transition:transform .15s ease;margin:0 5px 5px 0}
+.recent-dropdown.is-open .recent-chevron{transform:rotate(225deg);margin-bottom:0;margin-top:5px}
+.recent-dropdown .trade-feed{margin-top:8px}
+.recent-dropdown .trade-feed[hidden]{display:none!important}
+@media(max-width:460px){
+ .market-entry-value{font-size:12px}
+ .market-entry-name{font-size:12px}
+ .leader-breakdown{padding:7px 8px}
+ .portfolio-detail{gap:6px}
+}
+
+/* Compact portfolio rows: the number of shares and current SP value on one line. */
+.leader-compact-detail{margin:5px 0 0 14px}
+.leader-card.market-entry{padding:11px 4px}
+.holding-compact{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:3px 0;line-height:1.4;font-size:12px}
+.holding-compact-label{color:#b9cbe4;min-width:0;overflow-wrap:break-word}
+.holding-compact-value{color:#eff5ff;font-size:12px;font-weight:650;white-space:nowrap;text-align:right}
+.leader-card .position-list{margin-top:0}
+.leader-card .market-entry-heading{margin-bottom:6px}
+#positions .position-list{margin-top:4px}
+#positions .holding-compact{padding:5px 0}
+@media(max-width:420px){.leader-compact-detail{margin-left:7px}.holding-compact{gap:5px;font-size:11px}.holding-compact-value{font-size:11px}}
+
+/* Tap your portfolio badge to see trade history. */
+header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.account-trigger{appearance:none;display:block;border:1px solid #304464;color:#eef5ff;cursor:pointer;font-weight:700;max-width:min(60vw,340px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;transition:background .15s,border-color .15s}
+.account-trigger:hover{background:#203756;border-color:#6e9ed4}
+.account-trigger:focus-visible{outline:2px solid #72aaff;outline-offset:3px}
+.sex-chart-key{margin:11px 0 4px;padding-top:1px;display:flex;gap:19px;align-items:center;font-size:12px;color:#b8c9e2}
+.sex-chart-key span{display:inline-flex;align-items:center;gap:7px}
+.chart-swatch{display:inline-block;width:21px;height:0;border-top:3px solid;border-radius:3px}
+.chart-swatch-boy{border-color:#64a1ff}
+.chart-swatch-girl{border-color:#e58ac4}
+.sex-chart-key + .buttonrow{margin-top:14px}
+@media(max-width:480px){
+ .brand{font-size:18px}
+ .account-trigger{font-size:11px;max-width:57vw;padding:9px 11px}
+ .hero h1{font-size:clamp(27px,7vw,36px);letter-spacing:-1.3px}
+}
+.unspent-bottom{border-top:1px solid #2b3b54;margin-top:9px;padding-top:8px}
+.account-values.unspent-bottom{margin-top:12px}
+.account-values.unspent-bottom .portfolio-detail{padding:4px 0}
+.leader-card .unspent-bottom{margin-top:8px}
+.holding-compact{justify-content:flex-start}
+.holding-compact-label{color:#d4e3f5}
+.unspent-bottom .holding-compact-label{color:#a5b7d1}
+.unspent-bottom .holding-compact-value{margin-left:auto}
+.sex-chart-summary{margin:10px 0 3px}
+.sex-chart-summary .plain-market-stats{margin:0}
+
+/* Aligned SP values for holdings and history, no unspent divider */
+.holding-compact{display:flex;justify-content:space-between;align-items:baseline;gap:9px}
+.holding-compact-label{flex:1 1 auto;min-width:0;overflow-wrap:anywhere}
+.holding-compact-value{flex:0 0 auto;margin-left:auto;white-space:nowrap;text-align:right;color:#f0f6ff;font-weight:700}
+.unspent-bottom{border-top:0!important;padding-top:3px!important;margin-top:3px!important}
+.account-values.unspent-bottom{border-top:0;margin-top:6px!important;padding-top:0}
+.account-values.unspent-bottom .holding-compact{padding:5px 0}
+.leader-card .unspent-bottom{margin-top:4px!important}
+.trade-line.market-entry .trade-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:7px}
+.trade-line.market-entry .trade-top .trade-name{font-size:12px}
+.trade-line.market-entry .trade-top .trade-when{margin-left:auto}
+.trade-holding{padding:0 0 1px}
+@media(max-width:460px){.holding-compact{gap:8px}.holding-compact-label,.holding-compact-value{font-size:11px}.trade-line.market-entry .trade-top .trade-when{margin-left:0}}
+
+/* Read-only settlement preview, shown above the leaderboard. */
+.settlement-simulator .sub{margin:9px 0 0}
+.sim-readonly{font-size:10px;font-weight:800;letter-spacing:.5px;color:#9baecc;white-space:nowrap}
+.sim-fields{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin:17px 0 0}
+.sim-field{display:flex;flex-direction:column;gap:7px;min-width:0;font-size:12px;color:#afc2df}
+.sim-field select{display:block;box-sizing:border-box;width:100%;max-width:100%;min-width:0;appearance:auto;background:#0c172a;border:1px solid #354969;border-radius:10px;color:#eef5ff;padding:12px 13px;font-size:16px;min-height:48px;line-height:1.25;color-scheme:dark}
+.sim-field select:focus-visible{outline:2px solid #72aaff;outline-offset:2px}
+.sim-actions{display:flex;gap:9px;align-items:center;margin-top:13px}
+.sim-actions .btn{flex:1;min-width:0;padding:11px 8px}
+.sim-status{font-size:11px;line-height:1.5;color:#99aed1;margin-top:12px}
+@media(max-width:395px){.sim-readonly{font-size:9px}.sim-actions .btn{padding:10px 7px}}
+/* Cost-basis performance appears only in Your Account, not in the leaderboard. */
+#positions .position-with-pnl{padding:2px 0 9px}
+#positions .position-with-pnl .holding-compact{padding:5px 0 0}
+#positions .position-pnl-row{display:flex;align-items:baseline;justify-content:space-between;gap:9px;padding:3px 0 0;font-size:11px;line-height:1.45;color:#94a9c9}
+#positions .position-pnl-row .position-pnl-value{margin-left:auto;flex:0 0 auto;font-size:11px;font-weight:750;white-space:nowrap}
+#positions .position-pnl-value.up{color:#56d9a7}
+#positions .position-pnl-value.down{color:#ff899b}
+#positions .position-pnl-value.neutral{color:#a9bcd6}
+.how-link{display:inline-flex;align-items:center;gap:6px;margin-top:12px;color:#8bbcff;font-size:13px;font-weight:750;text-decoration:none}
+.how-link:hover,.site-footer a:hover{text-decoration:underline}
+.how-link:focus-visible,.site-footer a:focus-visible{outline:2px solid #8bbcff;outline-offset:4px;border-radius:3px}
+.site-footer{max-width:1080px;padding:0 20px 30px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;color:#7389aa;font-size:12px}
+.site-footer a{color:#8bbcff;text-decoration:none;font-weight:750}
+.portfolio-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.portfolio-identity{min-width:0;max-width:65%;display:flex;flex-direction:column;gap:2px;text-align:right}
+.portfolio-identity-name{color:#eaf1ff;font-size:13px;font-weight:750;line-height:1.3;overflow-wrap:anywhere}
+.portfolio-identity-relationship{color:#91a6c8;font-size:11px;line-height:1.35;overflow-wrap:anywhere}
+.card h2.portfolio-value{color:#f4f8ff;font-size:clamp(30px,4vw,38px);font-weight:850;letter-spacing:-1.2px;line-height:1.18;margin:10px 0 2px;overflow-wrap:anywhere}
+.date-bet-type{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:13px 0 9px}
+.date-bet-type button{appearance:none;background:#15243c;border:1px solid #354868;color:#b5c9e7;border-radius:9px;font-size:11px;font-weight:700;padding:9px 4px;line-height:1.3;min-width:0}
+.date-bet-type button:hover{background:#1c3452}
+.date-bet-type button.active{background:#244875;border-color:#78abff;color:#fff}
+.date-bet-type button:focus-visible{outline:2px solid #96c0ff;outline-offset:2px}
+@media(max-width:400px){.date-bet-type button{font-size:10px;padding:9px 2px}}

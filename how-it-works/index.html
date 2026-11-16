@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080f1f">
+<title>How it works · Sipe Exchange</title>
+<meta name="description" content="Learn how to predict Baby Sipe's sex and birthday, trade shares, and understand the math behind Sipe Exchange.">
+<link rel="canonical" href="https://sipe.exchange/how-it-works/">
+<meta property="og:title" content="How it works · Sipe Exchange">
+<meta property="og:description" content="A simple guide to Sipe Exchange, followed by the math behind the prediction market.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sipe.exchange/how-it-works/">
+<style>
+:root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#eaf1ff;background:#080f1f;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;line-height:1.6}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:26px 24px 80px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:75px}
+.brand{font-size:22px;font-weight:850;letter-spacing:-.9px;text-decoration:none;white-space:nowrap}
+.brand em{font-style:normal;color:#66a3ff}
+.back{border:1px solid #344864;background:#15233a;padding:10px 15px;border-radius:999px;font-weight:650;font-size:13px;color:#e5f0ff;text-decoration:none;white-space:nowrap}
+.back:hover{background:#203855}
+.eyebrow{color:#8eabe0;font-size:11px;letter-spacing:2px;font-weight:800;text-transform:uppercase}
+h1{font-size:clamp(40px,7vw,70px);line-height:1.08;letter-spacing:-2.6px;margin:16px 0 17px}
+.lede{font-size:clamp(17px,2vw,21px);color:#a7bad7;max-width:700px;line-height:1.55;margin:0}
+.hero{padding-bottom:46px;border-bottom:1px solid #293a55}
+.intro{margin-top:40px}
+h2{font-size:clamp(26px,3.8vw,36px);letter-spacing:-1.2px;line-height:1.2;margin:0 0 18px}
+p{margin:0 0 14px;color:#b6c7df}
+.summary-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:23px 0}
+.panel{background:#111c30;border:1px solid #2a3b57;border-radius:18px;padding:23px;min-width:0}
+.step{color:#82aded;font-size:12px;font-weight:800;letter-spacing:1px;margin-bottom:16px}
+.panel h3{font-size:18px;letter-spacing:-.5px;line-height:1.3;margin:0 0 12px}
+.panel p{font-size:14px;line-height:1.7;margin:0}
+.emphasis{color:#f2f6ff;font-weight:760}
+.note{background:#14243b;border:1px solid #2b4264;border-radius:14px;padding:18px 20px;margin-top:20px;color:#b9cde9;font-size:14px}
+.note strong{color:#eaf1ff}
+.market-section{margin-top:64px}
+.market-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:23px}
+.market-title{display:flex;gap:10px;align-items:center;font-weight:800;font-size:18px;letter-spacing:-.4px;margin-bottom:10px}
+.market-grid p{font-size:14px;margin:0}
+.math-section{margin-top:75px;padding-top:52px;border-top:1px solid #293a55}
+.math-intro{max-width:760px;font-size:15px}
+.math-block{padding:28px 0;border-bottom:1px solid #263752;display:grid;grid-template-columns:200px minmax(0,1fr);gap:28px;align-items:start}
+.math-side{font-weight:750;font-size:16px;color:#eef4ff}
+.math-kicker{font-size:11px;letter-spacing:1px;color:#88a8d8;text-transform:uppercase;margin-bottom:7px;font-weight:800}
+.math-copy{min-width:0}
+.math-copy p{font-size:14px;line-height:1.8}
+.equation{display:block;overflow-x:auto;white-space:nowrap;background:#13243e;border:1px solid #2d4566;color:#e5f2ff;font-size:clamp(15px,2.1vw,18px);font-family:"SFMono-Regular",Consolas,"Liberation Mono",monospace;letter-spacing:-.4px;line-height:1.6;border-radius:11px;padding:17px 19px;margin:16px 0}
+.equation small{font-family:inherit;font-size:13px;opacity:.8}
+.math-copy ul{padding-left:19px;margin:10px 0 15px;color:#b6c7df;font-size:14px;line-height:1.8}
+.math-copy li{margin:4px 0}
+.formula-tag{font-size:12px;color:#8cb4eb;font-weight:700;margin-top:8px}
+.example{background:#162d42;border:1px solid #2b5a69;padding:18px 20px;border-radius:12px;margin-top:17px;color:#c4e2f0;font-size:14px}
+.example strong{color:#eafaff}
+.footer{margin-top:57px;display:flex;justify-content:space-between;gap:15px;align-items:center;border-top:1px solid #293a55;padding-top:25px;color:#7188a9;font-size:12px}
+.footer a{color:#9bc5ff;text-decoration:none;font-weight:750}
+.footer a:hover,.back:hover{text-decoration:underline}
+a:focus-visible{outline:2px solid #87b5ff;outline-offset:4px}
+@media(max-width:740px){
+ .wrap{padding:20px 17px 55px}
+ .top{margin-bottom:52px}
+ .brand{font-size:20px}
+ .back{padding:8px 11px}
+ h1{letter-spacing:-1.9px}
+ .summary-grid,.market-grid{grid-template-columns:1fr}
+ .panel{padding:20px}
+ .math-section{margin-top:52px;padding-top:42px}
+ .math-block{grid-template-columns:1fr;gap:10px;padding:25px 0}
+ .math-side{font-size:17px}
+ .equation{font-size:14px;padding:15px 13px}
+ .footer{align-items:flex-start;flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+ <a class="brand" href="/">◈ Sipe <em>Exchange</em></a>
+ <a class="back" href="/">← Back to the exchange</a>
+</header>
+<main>
+<section class="hero">
+ <div class="eyebrow">The rules of the game</div>
+ <h1>How it works.</h1>
+ <p class="lede">Predict when Baby Sipe will arrive—and whether it's a boy or a girl. Trade your predictions, watch the odds move, and compete for Sipe Points.</p>
+</section>
+<section class="intro" aria-labelledby="simple-heading">
+ <div class="eyebrow">The short version</div>
+ <h2 id="simple-heading">A prediction market, minus the real money.</h2>
+ <div class="summary-grid">
+  <article class="panel">
+   <div class="step">01 / START</div>
+   <h3>Everyone gets §1,000.</h3>
+   <p>Every player starts with <span class="emphasis">§1,000</span> in imaginary Sipe Points. There's nothing to deposit and no actual money at stake.</p>
+  </article>
+  <article class="panel">
+   <div class="step">02 / PREDICT</div>
+   <h3>Buy the outcome you believe in.</h3>
+   <p>Pick <span class="emphasis">Boy or Girl</span>, or choose a date and predict <span class="emphasis">On or before</span>, <span class="emphasis">On or after</span>, or <span class="emphasis">Exact day</span>. You can buy or sell shares as the odds move.</p>
+  </article>
+  <article class="panel">
+   <div class="step">03 / WIN</div>
+   <h3>Sell early—or wait for the birth.</h3>
+   <p>Trade shares at any time. At settlement, each winning share pays <span class="emphasis">§1</span>. Losing shares pay <span class="emphasis">§0</span>. Most points wins the bragging rights.</p>
+  </article>
+ </div>
+ <div class="note"><strong>Think of the price as the crowd's odds.</strong> A Boy share trading at §0.600 means the market is pricing Boy at roughly 60%. The price changes as people trade—not because a moderator chooses the odds.</div>
+</section>
+<section class="market-section" aria-labelledby="markets-heading">
+ <div class="eyebrow">What you can predict</div>
+ <h2 id="markets-heading">Two markets. One baby.</h2>
+ <div class="market-grid">
+  <article class="panel">
+   <div class="market-title">💙 🩷 Boy or Girl</div>
+   <p>Buy Boy or Girl shares. Only the winning outcome pays §1 per share. Both prices always add up to §1.</p>
+  </article>
+  <article class="panel">
+   <div class="market-title">📅 Birthday</div>
+   <p>Choose a date and one of three inclusive contracts. <span class="emphasis">On or before Jan 27</span> wins Jan 27 or earlier; <span class="emphasis">On or after Jan 27</span> wins Jan 27 or later; <span class="emphasis">Exact Jan 27</span> wins only Jan 27. All three share the same birthday odds.</p>
+  </article>
+ </div>
+</section>
+<section class="math-section" aria-labelledby="math-heading">
+ <div class="eyebrow">Under the hood</div>
+ <h2 id="math-heading">Now, the math.</h2>
+ <p class="math-intro">Sipe Exchange uses a <strong style="color:#eaf1ff">Logarithmic Market Scoring Rule (LMSR)</strong>. It's an automated market maker: the exchange always quotes a price, so you don't have to find someone to take the other side of a trade.</p>
+ <article class="math-block">
+  <div><div class="math-kicker">01 / PRICING</div><div class="math-side">Prices are probabilities.</div></div>
+  <div class="math-copy">
+   <p>The market tracks a quantity <strong style="color:#eaf1ff">qᵢ</strong> for each possible outcome. A mathematical function called <em>softmax</em> turns those quantities into prices:</p>
+   <div class="equation" role="math" aria-label="Price of outcome i equals e to the q i over b, divided by the sum over outcomes j of e to the q j over b">pᵢ = exp(qᵢ / b) / Σⱼ exp(qⱼ / b)</div>
+   <p><strong style="color:#eaf1ff">pᵢ</strong> is the share price and implied probability of outcome <em>i</em>. <strong style="color:#eaf1ff">b</strong> controls how easily trades move prices; it's currently fixed at <strong style="color:#eaf1ff">2,600</strong>. For Boy/Girl, p(Boy) + p(Girl) = 1.</p>
+  </div>
+ </article>
+ <article class="math-block">
+  <div><div class="math-kicker">02 / EXECUTION</div><div class="math-side">The price moves as you trade.</div></div>
+  <div class="math-copy">
+   <p>Every purchase changes the inventory, so buying a lot of shares gets progressively more expensive. LMSR calculates the exact price of the whole trade with a <em>cost function</em>:</p>
+   <div class="equation" role="math" aria-label="C of q equals b times the natural logarithm of the sum over j of e to q j divided by b">C(q) = b × ln(Σⱼ exp(qⱼ / b))</div>
+   <div class="equation" role="math" aria-label="Trade cost equals C of inventory after, minus C of inventory before">Trade cost = C(q after) − C(q before)</div>
+   <p>Buying increases the relevant q values; selling decreases them. The cost difference is what you pay to buy, or what the market pays you when you sell.</p>
+   <div class="example"><strong>Example:</strong> With Boy initially at §0.500, spending §100 buys about <strong>196.30 Boy shares</strong> and lifts its price to roughly <strong>§0.519</strong>. You don't get 200 shares because your buy moves the price along the way.</div>
+  </div>
+ </article>
+ <article class="math-block">
+  <div><div class="math-kicker">03 / BIRTHDAY ODDS</div><div class="math-side">Dates are cumulative.</div></div>
+  <div class="math-copy">
+   <p>Underneath the birthday market are 31 probability buckets: the days in the January 13–February 11, 2027 window, plus a later-birth bucket. The earliest bucket also includes dates before January 13. Each contract uses the same daily probabilities:</p>
+   <div class="equation" role="math" aria-label="On or before is the sum of daily probabilities through d">P(On or before d) = Σᵢ≤d pᵢ</div><div class="equation" role="math" aria-label="On or after is the sum of daily probabilities from d onward">P(On or after d) = Σᵢ≥d pᵢ</div><div class="equation" role="math" aria-label="Exact day probability is the probability of d itself">P(Exact day d) = p_d</div>
+   <p>Buying <strong style="color:#eaf1ff">On or before Jan 27</strong> adds inventory to all outcomes through Jan 27. Buying <strong style="color:#eaf1ff">On or after Jan 27</strong> adds inventory to Jan 27 and all later outcomes. Buying <strong style="color:#eaf1ff">Exact Jan 27</strong> adds inventory only to that day. Everyone trades against the same LMSR market maker.</p>
+   <p>The two inclusive sides overlap on the selected day: their prices add up to §1 plus the exact-day price. Because the first probability bucket includes January 13 and earlier dates, the market offers Exact day and On or after contracts starting January 14.</p>
+  </div>
+ </article>
+ <article class="math-block">
+  <div><div class="math-kicker">04 / LIQUIDITY</div><div class="math-side">Market depth is fixed.</div></div>
+  <div class="math-copy">
+   <p>The parameter <strong style="color:#eaf1ff">b = 2,600</strong> controls price sensitivity. A smaller b means a single trade can swing the odds dramatically; a larger b makes the market steadier.</p>
+   <div class="equation" role="math" aria-label="The current LMSR liquidity parameter b equals two thousand six hundred">b = 2,600</div>
+   <p>Liquidity is fixed today. New participants receiving their initial §1,000 do <em>not</em> automatically change existing prices or expand market depth.</p>
+  </div>
+ </article>
+ <article class="math-block">
+  <div><div class="math-kicker">05 / YOUR BALANCE</div><div class="math-side">What your shares are worth.</div></div>
+  <div class="math-copy">
+   <p>Your portfolio combines unspent points with your shares valued at the latest market prices:</p>
+   <div class="equation" role="math" aria-label="Portfolio value equals unspent points plus the sum of shares times current price">Portfolio = Cash + Σ(shares × current price)</div>
+   <p>The gain or loss below each position compares its current price to your average purchase cost:</p>
+   <div class="equation" role="math" aria-label="Unrealized profit or loss equals shares held multiplied by current price minus average cost">Unrealized P/L = shares × (current price − average cost)</div>
+   <p>Those are <em>estimated values if you marked every share at today's prices</em>, not guaranteed sale proceeds. A large sale would move the market as it executes.</p>
+  </div>
+ </article>
+ <article class="math-block">
+  <div><div class="math-kicker">06 / SETTLEMENT</div><div class="math-side">The result decides the winner.</div></div>
+  <div class="math-copy">
+   <p>After the birth, each correctly predicted share pays §1. Each incorrect share pays §0. Your final score is your unspent balance plus all winning share payouts.</p>
+   <div class="equation" role="math" aria-label="Final score equals cash plus the number of winning shares">Final points = Cash + winning shares × §1</div>
+   <p>For example, if you paid an average §0.400 for 100 winning shares, you spent §40 and receive §100 at settlement: a <strong style="color:#eaf1ff">§60 gain</strong>.</p>
+  </div>
+ </article>
+</section>
+</main>
+<footer class="footer"><span>◈ Sipe Exchange · No real money. Just predictions and bragging rights.</span><a href="/">Back to the exchange →</a></footer>
+</div>
+</body>
+</html>
