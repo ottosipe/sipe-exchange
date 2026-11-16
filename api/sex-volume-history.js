@@ -22,7 +22,7 @@ module.exports=async function(req,res){
   const session=await client.query('SELECT user_id FROM babymarket_sessions WHERE token_hash=$1',[digest]);
   if(!session.rowCount)return res.status(401).json({error:'Sign in required'});
   const trades=await client.query(
-    "SELECT to_char(date_trunc('hour',created_at AT TIME ZONE 'UTC'),'YYYY-MM-DD"T"HH24:00:00"Z"') AS hour,outcome,SUM(ABS(points))::float8 AS sp,SUM(ABS(shares))::float8 AS shares FROM babymarket_trades WHERE market='sex' GROUP BY 1,2 ORDER BY 1,2"
+    "SELECT to_char(date_trunc('hour',created_at AT TIME ZONE 'UTC'),'YYYY-MM-DD\\\"T\\\"HH24:00:00\\\"Z\\\"') AS hour,outcome,SUM(ABS(points))::float8 AS sp,SUM(ABS(shares))::float8 AS shares FROM babymarket_trades WHERE market='sex' GROUP BY 1,2 ORDER BY 1,2"
   );
   const hours=new Map();
   for(const r of trades.rows){
