@@ -194,3 +194,8 @@ header{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .date-bet-type button.active{background:#244875;border-color:#78abff;color:#fff}
 .date-bet-type button:focus-visible{outline:2px solid #96c0ff;outline-offset:2px}
 @media(max-width:400px){.date-bet-type button{font-size:10px;padding:9px 2px}}
+
+/* Keep unavailable sale choices visible, but clearly non-interactive. */
+.trade-sex-choice:disabled,.date-bet-type button:disabled{opacity:.35;cursor:not-allowed;filter:grayscale(.7);box-shadow:none}
+.trade-sex-choice:disabled:hover,.date-bet-type button:disabled:hover{background:#15243c}
+#tradeOutcome option:disabled{color:#7e8ba2;background:#17243a}
