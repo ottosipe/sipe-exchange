@@ -67,7 +67,7 @@ function showMoreLeaders(){leaderboardLimit+=5;render()}
 function render(){if(!user())return;const sim=settlementPreview,value=u=>sim?settlementPortfolio(u,sim):portfolio(u);let sp=softmax(state.sexQ),p=datePrice(cutoff,dateContractType);$('account').textContent=user().name+' · '+spExact(value(user()));$('account').setAttribute('aria-label','View your trade history · '+user().name+' · '+(sim?'Simulated ':'')+spExact(value(user())));$('greeting').textContent=user().name;$('portfolioRelationship').textContent=user().relationship;$('cash').textContent=spExact(user().cash);$('netWorth').textContent=spExact(value(user()));$('portfolioMode').textContent=sim?'PORTFOLIO · SIMULATED':'PORTFOLIO';$('boyOdds').textContent=priceTag(sp[0]);$('girlOdds').textContent=priceTag(sp[1]);$('boyProbability').textContent=payoutRatio(sp[0]);$('girlProbability').textContent=payoutRatio(sp[1]);$('boy').classList.toggle('active',selectedSex==='Boy');$('girl').classList.toggle('active',selectedSex==='Girl');{const k=cutoff;$("dateExactDay").textContent=label(dates[k]);for(const [type,suffix] of [['before','Before'],['exact','Exact'],['after','After']]){const price=datePrice(k,type);$('datePrice'+suffix).textContent=priceTag(price);$('datePayout'+suffix).textContent=payoutRatio(price)}}for(const [type,id] of [['before','dateTypeBefore'],['exact','dateTypeExact'],['after','dateTypeAfter']]){$(id).classList.toggle('active',dateContractType===type);$(id).setAttribute('aria-pressed',String(dateContractType===type))}renderWagerTotals();$('cutoff').value=cutoff;
 drawHistoricalOdds();drawDateDots();drawDateVolume();drawSexVolume();
 $('leaderboardMode').textContent=sim?'SIMULATED FINAL VALUE':'TOTAL VALUE';
-$('simRun').textContent=sim?'Update preview':'Simulate';
+$('simRun').classList.toggle('hidden',!!sim);
 $('simReset').classList.toggle('hidden',!sim);
 $('simStatus').textContent=sim?('Simulated '+(sim.sex===0?'boy':'girl')+' born '+label(sim.birth)+'. Winning shares pay §1; live balances stay unchanged.'):'Preview only. No trades, holdings, or balances will change.';
 let entries=Object.entries(state.users).map(([id,u])=>({...u,id})).sort((a,b)=>leaderboardSort==='joined'?(Date.parse(b.joinedAt||0)||0)-(Date.parse(a.joinedAt||0)||0)||String(a.name).localeCompare(String(b.name)):value(b)-value(a)||String(a.name).localeCompare(String(b.name)));
@@ -97,7 +97,7 @@ function openTrade(m,mode){
 function selectedPositionShares(p){const u=user();return Number((p.type==='sex'?u.sex:p.type==='before'?u.date:p.type==='exact'?u.dateExact:u.dateAfter)?.[p.index]||0)}
 function selectFirstSellPosition(){if(tradeMode!=='sell')return;const positions=sellPositions().filter(p=>p.market===tradeMarket);if(!positions.length){$('tradeOutcome').value='';return}let chosen=positions.find(p=>p.type===tradeContractType&&String(p.index)===$('tradeOutcome').value)||positions[0];tradeContractType=chosen.type;if(tradeMarket==='date')rebuildDateOutcomeOptions(chosen.index);else $('tradeOutcome').value=String(chosen.index)}
 function chooseTradeSex(index){
- if(tradeMarket!=='sex')return;
+ if(tradeMarket!=='sex'||(tradeMode==='sell'&&Number(user()?.sex?.[index]||0)<=1e-7))return;
  sellMaxFullShares=null;
  $('tradeOutcome').value=String(index);
  selectedSex=index===0?'Boy':'Girl';
@@ -149,13 +149,18 @@ function renderTrade(){
   const positions=sellPositions().filter(p=>p.market===tradeMarket);
   if(tradeMarket==='date'){
    const types=availableSellTypes();
-   for(const [type,id] of [['before','tradeTypeBefore'],['exact','tradeTypeExact'],['after','tradeTypeAfter']])$(id).classList.toggle('hidden',!types.has(type));
+   for(const [type,id] of [['before','tradeTypeBefore'],['exact','tradeTypeExact'],['after','tradeTypeAfter']]){
+    $(id).classList.remove('hidden');$(id).disabled=!types.has(type);
+   }
+   // Disabled options remain visible in the date dropdown.
+   // Preserve the selected holding when data refreshes.
+   if(!selectedTradeHoldings())rebuildDateOutcomeOptions($('tradeOutcome').value);
   }else{
-   $('tradeSexBoy').classList.toggle('hidden',!positions.some(p=>p.index===0));$('tradeSexGirl').classList.toggle('hidden',!positions.some(p=>p.index===1));
+   for(let i=0;i<2;i++)$(i===0?'tradeSexBoy':'tradeSexGirl').disabled=Number(user()?.sex?.[i]||0)<=1e-7;
   }
   if(!positions.length)$('tradeOutcome').value='';
  }else{
-  $('tradeSexBoy').classList.remove('hidden');$('tradeSexGirl').classList.remove('hidden');for(const id of ['tradeTypeBefore','tradeTypeExact','tradeTypeAfter'])$(id).classList.remove('hidden');
+  for(const id of ['tradeSexBoy','tradeSexGirl','tradeTypeBefore','tradeTypeExact','tradeTypeAfter']){$(id).classList.remove('hidden');$(id).disabled=false;}
  }
  $('tradeHoldings').textContent=tradeMode==='buy'?'Max: '+'§'+available.toLocaleString('en-US',{maximumFractionDigits:3})+' available':selected?'Max: '+asShares(held)+' shares held':'Select an outcome to see shares held';
  $('sellMaxButton').textContent='Max';
