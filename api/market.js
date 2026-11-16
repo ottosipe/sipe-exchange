@@ -12,7 +12,7 @@ function visible(s,id){
  const env=economy(s),b=liquidity(s);
  if(!id)return {users:{},current:null,sexQ:[0,0],dateQ:Array(31).fill(0),history:[],liquidity:b,economy:env};
  const users={};
- for(const [key,u] of Object.entries(s.users))users[key]={name:u.name,relationship:u.relationship,cash:u.cash,sex:u.sex,date:u.date};
+ for(const [key,u] of Object.entries(s.users))users[key]={name:u.name,relationship:u.relationship,joinedAt:u.joinedAt||null,cash:u.cash,sex:u.sex,date:u.date};
  return {users,current:id,sexQ:s.sexQ,dateQ:s.dateQ,history:s.history,liquidity:b,economy:env};
 }
 function cookies(req){const out={};for(const item of (req.headers.cookie||'').split(';')){const k=item.indexOf('=');if(k>0){try{out[item.slice(0,k).trim()]=decodeURIComponent(item.slice(k+1).trim())}catch(e){}}}return out}
