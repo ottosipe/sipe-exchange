@@ -31,8 +31,8 @@ function renderHoldingRows(u,basis,sim=null,showPerformance=false){
   const changeText=!hasBasis?'—':nearZero?'§0.00':signedSP(change);
   const changeStyle=!hasBasis||nearZero?'neutral':change>0?'up':'down';
   rows.push('<div class="position-with-pnl">'+main
-   +'<div class="position-pnl-row"><span>Current '+priceTag(currentPrice)+'</span>'
-   +'<strong class="position-pnl-value '+changeStyle+'" title="Unrealized gain or loss versus average cost paid">'+changeText+'</strong></div></div>');
+   +'<div class="position-pnl-row"><span>'+(sim?'Settlement ':'Current ')+priceTag(currentPrice)+'</span>'
+   +'<strong class="position-pnl-value '+changeStyle+'" title="'+(sim?'Simulated settlement gain or loss':'Unrealized gain or loss')+' versus average cost paid">'+changeText+'</strong></div></div>');
  };
  const prices=softmax(state.sexQ);
  for(let j=0;j<2;j++)add(j===0?'💙':'🩷',j===0?'Boy':'Girl',Number(u.sex?.[j]||0),basis?.sex?.[j],sim?(sim.sex===j?1:0):prices[j]);
