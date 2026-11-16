@@ -1,6 +1,7 @@
 const {Pool}=require('pg');
 const crypto=require('crypto');
 const Pricing=require('../pricing');
+const Liquidity=require('./liquidity');
 const pool=new Pool({connectionString:process.env.POSTGRES_URL||process.env.DATABASE_URL,max:3,idleTimeoutMillis:10000,connectionTimeoutMillis:9000});
 const SIZE=31;
 function fail(message,status=400){const e=new Error(message);e.status=status;throw e}
@@ -15,8 +16,7 @@ async function authenticate(client,req){
 }
 function positions(u){return {dateAfter:Array.from({length:SIZE},(_,i)=>Number(u.dateAfter?.[i]||0)),dateExact:Array.from({length:SIZE},(_,i)=>Number(u.dateExact?.[i]||0)),dateAfterBasis:Array.from({length:SIZE},(_,i)=>u.dateAfterBasis?.[i]??null),dateExactBasis:Array.from({length:SIZE},(_,i)=>u.dateExactBasis?.[i]??null)}}
 function indices(type,day){if(type==='exact')return [day];if(type==='after')return Array.from({length:SIZE-day},(_,i)=>i+day);fail('Unsupported birthday contract')}
-function quote(q,ix,mode,amount,held){
- const b=Pricing.marketLiquidity();
+function quote(q,ix,mode,amount,held,b){
  if(mode==='sell'){
   if(amount>held+1e-7)fail('You cannot sell more shares than you hold');
   const shares=Math.min(amount,held),points=-Pricing.delta(q,ix,-shares,b);
@@ -59,13 +59,15 @@ module.exports=async function handler(req,res){
   const result=await client.query('SELECT data FROM babymarket_state WHERE id=1 FOR UPDATE');
   const s=result.rows[0]?.data;
   if(!s||!Array.isArray(s.dateQ)||s.dateQ.length!==SIZE||!s.users?.[userId])fail('Market unavailable',409);
+  await Liquidity.synchronizeLiquidity(s,client);
+  const depth=Liquidity.liquidity(s);
   const u=s.users[userId],ix=indices(type,day),key=type==='after'?'dateAfter':'dateExact',basisKey=key+'Basis';
   if(!Array.isArray(u[key]))u[key]=Array(SIZE).fill(0);
   if(!Array.isArray(u[basisKey]))u[basisKey]=Array(SIZE).fill(null);
   const held=Number(u[key][day]||0),cash=Number(u.cash||0);
   if(mode==='buy'&&amount>cash+1e-7)fail('Not enough available balance');
   if(mode==='sell'&&held<amount-1e-7)fail('Not enough shares to sell');
-  const trade=quote(s.dateQ,ix,mode,amount,held);
+  const trade=quote(s.dateQ,ix,mode,amount,held,depth);
   if(mode==='buy'){
     const oldBasis=Number(u[basisKey][day]||0);
     u[basisKey][day]=(oldBasis*held+trade.points)/(held+trade.shares);
@@ -81,8 +83,8 @@ module.exports=async function handler(req,res){
   const record={id:crypto.randomUUID(),userId,market:'date',contractType:type,outcome:day,side:mode,shares:trade.shares,points:trade.points,createdAt:new Date().toISOString()};
   s.dateNewTrades.push(record);
   if(!Array.isArray(s.history))s.history=[];
-  const dp=Pricing.softmax(s.dateQ,Pricing.marketLiquidity());
-  s.history.push({sex:Pricing.boyProbability(s.sexQ,Pricing.marketLiquidity()),date:dp.slice(0,15).reduce((a,x)=>a+x,0),event:'trade',liquidity:Pricing.marketLiquidity()});
+  const dp=Pricing.softmax(s.dateQ,depth);
+  s.history.push({sex:Pricing.boyProbability(s.sexQ,depth),date:dp.slice(0,15).reduce((a,x)=>a+x,0),event:'trade',liquidity:depth});
   await client.query('UPDATE babymarket_state SET data=$1::jsonb WHERE id=1',[JSON.stringify(s)]);
   await client.query('COMMIT');
   return res.status(200).json({ok:true,trade:record,cash:u.cash});

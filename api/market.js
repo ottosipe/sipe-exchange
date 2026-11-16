@@ -2,14 +2,12 @@
 const {Pool}=require('pg');
 const crypto=require('crypto');
 const Pricing=require('../pricing');
+const Liquidity=require('./liquidity');
 const LEGACY_B=180;
 const pool=new Pool({connectionString:process.env.POSTGRES_URL||process.env.DATABASE_URL,max:3,idleTimeoutMillis:10000,connectionTimeoutMillis:9000});
 function initial(){return {users:{},sexQ:[0,0],dateQ:Array(31).fill(0),dateWindowVersion:2,history:[]}}
-function economy(s){
- const participants=Object.keys(s.users||{}).length;
- return {participants,issuedSP:participants*Pricing.SP_PER_PARTICIPANT};
-}
-function liquidity(s){return Pricing.liquidityFromMembers(economy(s).participants)}
+const economy=Liquidity.economy;
+const liquidity=Liquidity.liquidity;
 function visible(s,id){
  const env=economy(s),b=liquidity(s);
  if(!id)return {users:{},current:null,sexQ:[0,0],dateQ:Array(31).fill(0),history:[],liquidity:b,economy:env};
@@ -50,6 +48,7 @@ module.exports=async function handler(req,res){
    await client.query("UPDATE babymarket_trades SET outcome=outcome+1 WHERE market='date'");
    state.dateWindowVersion=2;changed=true;
   }
+  if(await Liquidity.synchronizeLiquidity(state,client))changed=true;
   const cookieToken=cookies(req).bm_session,tokenHash=cookieToken?crypto.createHash('sha256').update(cookieToken).digest('hex'):null;
   const sessions=tokenHash?await client.query('SELECT user_id FROM babymarket_sessions WHERE token_hash=$1',[tokenHash]):{rows:[]};
   let id=sessions.rows[0]?.user_id||null;
@@ -69,7 +68,7 @@ module.exports=async function handler(req,res){
      }
      id=crypto.randomUUID();
      state.users[id]={email,name,relationship:normalizedRole==='mom'?'Mom':normalizedRole==='dad'?'Dad':relationship,joinedAt:new Date().toISOString(),cash:1000,sex:[0,0],date:Array(30).fill(0)};
-     changed=true;recordMarketState(state,'signup');
+     changed=true;await Liquidity.synchronizeLiquidity(state,client);recordMarketState(state,'signup');
     }
     const token=crypto.randomBytes(32).toString('hex'),hash=crypto.createHash('sha256').update(token).digest('hex');
     await client.query('INSERT INTO babymarket_sessions(token_hash,user_id) VALUES($1,$2)',[hash,id]);

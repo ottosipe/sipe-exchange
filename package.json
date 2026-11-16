@@ -1,1 +1,15 @@
-{"name":"sipe-exchange","version":"1.0.0","private":true,"engines":{"node":">=20"},"dependencies":{"pg":"8.13.1","sharp":"0.33.5"}}
+{
+  "name": "sipe-exchange",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "pg": "8.13.1",
+    "sharp": "0.33.5"
+  },
+  "scripts": {
+    "test": "node --test"
+  }
+}
